@@ -30,11 +30,12 @@ LocalMindAgent/
 
 ```bash
 cd backend
-cp .env.example .env   # 编辑配置
-pip install -r requirements.txt
-alembic upgrade head
-python main.py         # 启动 API 服务 http://localhost:8000
-python doc_worker.py   # 启动文档处理 Worker（另开终端）
+cp .env.example .env        # 编辑配置
+
+uv add -r requirements.txt
+uv run main.py              # 启动 API 服务 http://localhost:8000
+uv run doc_worker.py        # 启动文档处理 Worker（另开终端）
+uv run evaluation_worker.py # 启动评估 Worker（另开终端）
 ```
 
 ### 前端
