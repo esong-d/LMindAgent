@@ -1,0 +1,186 @@
+/* ───────────────────────────────────────────────
+   Register page — soft editorial + warm accent
+   ─────────────────────────────────────────────── */
+
+.shell {
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* ── Ambient background orbs ───────────────── */
+
+.bgOrb,
+.bgOrb2 {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.12;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bgOrb {
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  top: -140px;
+  right: -100px;
+  animation: drift 18s ease-in-out infinite;
+}
+
+.bgOrb2 {
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, var(--brand) 0%, transparent 70%);
+  bottom: -120px;
+  left: -80px;
+  animation: drift 22s ease-in-out infinite reverse;
+}
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -20px) scale(1.08); }
+  66% { transform: translate(-15px, 25px) scale(0.95); }
+}
+
+/* ── Card ──────────────────────────────────── */
+
+.card {
+  position: relative;
+  z-index: 1;
+  width: min(440px, 100%);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.03),
+    0 2px 4px rgba(0, 0, 0, 0.04),
+    0 12px 40px rgba(0, 0, 0, 0.08);
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Decorative accent bar ─────────────────── */
+
+.accentBar {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--brand) 0%,
+    var(--accent) 50%,
+    var(--brand) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* ── Header ────────────────────────────────── */
+
+.header {
+  padding: 22px 24px 0;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+
+.title {
+  margin: 0;
+  font: 700 22px/125% var(--heading);
+  color: var(--text-h);
+  letter-spacing: -0.3px;
+}
+
+.subtitle {
+  margin-top: 6px;
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Form ──────────────────────────────────── */
+
+.form {
+  display: grid;
+  gap: 12px;
+  padding: 18px 24px 0;
+}
+
+/* ── Submit override ───────────────────────── */
+
+.submitOverride {
+  margin-top: 4px;
+  height: 38px;
+  border-radius: 12px;
+  font-weight: 650;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+  transition: opacity 0.2s ease, transform 0.15s ease;
+}
+
+.submitOverride:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.submitOverride:not(:disabled):active {
+  transform: translateY(0);
+}
+
+.submitOverride:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── Footer ────────────────────────────────── */
+
+.footer {
+  padding: 18px 24px 22px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-secondary);
+  margin-top: 18px;
+}
+
+.link {
+  color: var(--brand);
+  font-weight: 650;
+  margin-left: 4px;
+  transition: color 0.15s ease;
+}
+
+.link:hover {
+  color: var(--brand-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Strength indicator (subtle visual feedback) ── */
+
+.passwordHint {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-top: -6px;
+  padding: 0 2px;
+}

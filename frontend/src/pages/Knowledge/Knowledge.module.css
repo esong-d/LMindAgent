@@ -1,0 +1,257 @@
+.page {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ---- Card ---- */
+.card {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.card :global(.ant-card-head) {
+  flex: 0 0 auto;
+}
+
+.card :global(.ant-card-body) {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* ---- Table area ---- */
+.tableWrap {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.table {
+  height: 100%;
+}
+
+.table :global(.ant-spin-nested-loading),
+.table :global(.ant-spin-container),
+.table :global(.ant-table) {
+  height: 100%;
+}
+
+.table :global(.ant-table-container) {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.table :global(.ant-table-body) {
+  overflow: auto !important;
+}
+
+.table :global(.ant-table-header) {
+  overflow-x: hidden !important;
+}
+
+.table :global(.ant-table-sticky-scroll) {
+  bottom: 8px;
+  z-index: 3;
+}
+
+/* ---- enterprise-grade thin scrollbar ---- */
+.tableWrap :global(.ant-table-body) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+}
+
+.tableWrap :global(.ant-table-body)::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+.tableWrap :global(.ant-table-body)::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tableWrap :global(.ant-table-body)::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 999px;
+}
+
+.tableWrap :global(.ant-table-body)::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb);
+}
+
+.tableWrap :global(.ant-table-body)::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.table :global(.ant-table-sticky-scroll-bar) {
+  border-radius: 999px;
+  background: var(--scrollbar-thumb) !important;
+}
+
+.table :global(.ant-table-sticky-scroll-bar:hover) {
+  background: var(--scrollbar-thumb) !important;
+}
+
+/* ---- Pagination bar ---- */
+.paginationBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex: 0 0 auto;
+  flex-wrap: wrap;
+  padding-top: 12px;
+  margin-top: 12px;
+  border-top: 1px solid var(--border);
+  background: var(--surface, #fff);
+}
+
+/* ---- Modal ---- */
+.dialogOverlay {
+  position: fixed;
+  inset: 0;
+  background: var(--overlay);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1000;
+}
+
+.dialog {
+  width: min(640px, 100%);
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 14px;
+}
+
+.dialogHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dialogTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 750;
+  color: var(--text-h);
+}
+
+.dialogClose {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  height: 32px;
+  width: 32px;
+  cursor: pointer;
+  color: var(--text-h);
+  line-height: 1;
+  font-size: 18px;
+}
+
+/* ---- Form ---- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 12px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  font-size: 12px;
+  color: var(--text-h);
+  font-weight: 700;
+}
+
+.input {
+  height: 34px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 0 10px;
+  color: var(--text-h);
+}
+
+.textarea {
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  padding: 8px 10px;
+  color: var(--text-h);
+  resize: vertical;
+}
+
+.monoTextarea {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.input:focus-visible,
+.textarea:focus-visible,
+.select:focus-visible,
+.dialogClose:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding-top: 4px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 720px) {
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .headerActions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

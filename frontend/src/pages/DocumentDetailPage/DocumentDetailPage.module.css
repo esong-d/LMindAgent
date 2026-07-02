@@ -1,0 +1,11 @@
+.page {
+  min-height: 100%;
+}
+
+.title {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+}

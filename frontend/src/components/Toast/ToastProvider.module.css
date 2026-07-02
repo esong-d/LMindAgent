@@ -1,0 +1,178 @@
+.viewport {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: grid;
+  gap: 10px;
+  width: min(440px, calc(100% - 24px));
+  pointer-events: none;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.viewport > * {
+  animation: toastIn 140ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .viewport > * {
+    animation: none;
+  }
+}
+
+.toast {
+  pointer-events: auto;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 12px 14px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.toast::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(2, 6, 23, 0.15);
+}
+
+.iconWrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  background: rgba(2, 6, 23, 0.06);
+  color: var(--text-h);
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+.body {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.title {
+  font-weight: 750;
+  color: var(--text-h);
+  line-height: 1.2;
+  margin: 0;
+  font-size: 13px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.message {
+  margin-top: 2px;
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+.close {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  border-radius: 10px;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  color: var(--text);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close:hover {
+  background: rgba(2, 6, 23, 0.06);
+}
+
+.close:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+.info {
+  background: var(--surface);
+}
+
+.success {
+  border-color: var(--toast-success-border);
+  background: var(--toast-success-bg);
+}
+
+.warn {
+  border-color: var(--toast-warn-border);
+  background: var(--toast-warn-bg);
+}
+
+.error {
+  border-color: var(--toast-error-border);
+  background: var(--toast-error-bg);
+}
+
+.info::before {
+  background: rgba(2, 6, 23, 0.15);
+}
+
+.success::before {
+  background: #34d399;
+}
+
+.warn::before {
+  background: #fbbf24;
+}
+
+.error::before {
+  background: #f87171;
+}
+
+.success .iconWrap {
+  background: rgba(52, 211, 153, 0.18);
+  color: var(--toast-success-text);
+}
+
+.warn .iconWrap {
+  background: rgba(251, 191, 36, 0.18);
+  color: var(--toast-warn-text);
+}
+
+.error .iconWrap {
+  background: rgba(248, 113, 113, 0.18);
+  color: var(--toast-error-text);
+}

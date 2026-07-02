@@ -1,0 +1,84 @@
+services:
+
+  app:
+    image: app:latest
+    container_name: app
+    env_file:
+      - .env.docker
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - network
+
+  doc_worker:
+    image: app:latest
+    container_name: doc_worker
+    env_file:
+      - .env.docker
+    volumes:
+      - .:/app
+    command: python doc_worker.py
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - network
+
+  eval_worker:
+    image: app:latest
+    container_name: eval_worker
+    env_file:
+      - .env.docker
+    volumes:
+      - .:/app
+    command: python evaluation_worker.py
+    depends_on:
+      pgsql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - network
+
+  pgsql:
+    image: pgvector/pgvector:0.8.2-pg18-trixie
+    container_name: pgsql
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: postgres
+      POSTGRES_DB: local_mind_agent_db
+      PGDATA: /var/lib/postgresql/18/docker
+    ports:
+      - "54326:5432"
+    volumes:
+      - ./data/pgsql/data:/var/lib/postgresql/18/docker
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d local_mind_agent_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5 
+    networks:
+      - network
+
+  redis:
+    image: redis:latest
+    container_name: rds
+    ports:
+      - "63795:6379"
+    volumes:
+      - ./data/redis/data:/data
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge

@@ -1,0 +1,1314 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>个人知识库 Agent UI 原型 - 简洁版</title>
+  <style>
+    :root {
+      --bg: #f7f8fa;
+      --surface: #ffffff;
+      --line: #e3e7ee;
+      --line-soft: #eef1f5;
+      --text: #202938;
+      --muted: #667085;
+      --soft: #f3f5f8;
+      --brand: #2563eb;
+      --brand-soft: #eaf1ff;
+      --green: #14845f;
+      --amber: #a76516;
+      --red: #bd3b35;
+      --radius: 8px;
+      font-family: Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background: var(--bg);
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      color: inherit;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: 56px 1fr;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 240px 1fr auto;
+      gap: 16px;
+      align-items: center;
+      padding: 0 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: var(--brand);
+    }
+
+    .search {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .search input {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .btn {
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      white-space: nowrap;
+    }
+
+    .btn.primary {
+      color: #fff;
+      border-color: var(--brand);
+      background: var(--brand);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr) 320px;
+      min-height: calc(100vh - 56px);
+    }
+
+    .sidebar,
+    .context {
+      background: var(--surface);
+      overflow: auto;
+    }
+
+    .sidebar {
+      padding: 14px 10px;
+      border-right: 1px solid var(--line);
+      display: grid;
+      grid-template-rows: 1fr auto;
+      gap: 12px;
+    }
+
+    .context {
+      border-left: 1px solid var(--line);
+    }
+
+    .label {
+      margin: 12px 8px 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .side-item {
+      width: 100%;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: 8px;
+      text-align: left;
+    }
+
+    .side-item:hover {
+      background: var(--soft);
+    }
+
+    .side-item.active {
+      color: var(--brand);
+      background: var(--brand-soft);
+      font-weight: 800;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+      flex: 0 0 auto;
+    }
+
+    .side-text {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .side-title {
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .side-meta {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 400;
+    }
+
+    .sidebar-scroll {
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .user-card {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr) 34px;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .user-avatar {
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      color: #fff;
+      background: #202938;
+      font-weight: 800;
+    }
+
+    .user-name,
+    .user-email {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .user-name {
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .user-email {
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .user-settings {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .main {
+      min-width: 0;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .main-head {
+      padding: 16px 22px 12px;
+      border-bottom: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.25;
+    }
+
+    .desc {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+      width: fit-content;
+      max-width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .tab {
+      height: 30px;
+      padding: 0 10px;
+      border-radius: 6px;
+      color: var(--muted);
+      white-space: nowrap;
+      font-size: 13px;
+    }
+
+    .tab.active {
+      color: var(--text);
+      background: var(--surface);
+      box-shadow: 0 1px 4px rgba(21, 33, 53, 0.08);
+      font-weight: 800;
+    }
+
+    .content {
+      overflow: auto;
+      padding: 22px;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .surface {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .section {
+      padding: 18px;
+    }
+
+    .section + .section {
+      border-top: 1px solid var(--line-soft);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-title strong {
+      font-size: 15px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      padding: 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 48px;
+      padding: 10px 12px;
+      border: 1px solid var(--line-soft);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .row-title {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      font-weight: 800;
+    }
+
+    .row-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      background: var(--soft);
+      white-space: nowrap;
+    }
+
+    .badge.green {
+      color: var(--green);
+      background: #e9f7f1;
+    }
+
+    .badge.amber {
+      color: var(--amber);
+      background: #fff5dc;
+    }
+
+    .badge.red {
+      color: var(--red);
+      background: #fff0ee;
+    }
+
+    .chat {
+      display: grid;
+      gap: 14px;
+    }
+
+    .message {
+      display: grid;
+      grid-template-columns: 34px minmax(0, 1fr);
+      gap: 10px;
+      align-items: start;
+    }
+
+    .avatar {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-weight: 800;
+    }
+
+    .avatar.ai {
+      color: #fff;
+      border-color: var(--brand);
+      background: var(--brand);
+    }
+
+    .bubble {
+      padding: 13px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      line-height: 1.65;
+    }
+
+    .bubble.user {
+      background: #eef5ff;
+      border-color: #d5e3ff;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      min-height: 26px;
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: var(--brand);
+      background: var(--brand-soft);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 280px minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .upload {
+      display: grid;
+      place-items: center;
+      min-height: 190px;
+      padding: 18px;
+      border: 1px dashed #b7c0cf;
+      border-radius: 8px;
+      background: var(--soft);
+      text-align: center;
+    }
+
+    .doc {
+      line-height: 1.75;
+    }
+
+    .doc h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+    }
+
+    .quote {
+      margin-top: 14px;
+      padding: 12px;
+      border-left: 3px solid var(--brand);
+      background: var(--brand-soft);
+      border-radius: 0 8px 8px 0;
+      color: #24436f;
+    }
+
+    .notes {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .note {
+      min-height: 130px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .note h3 {
+      margin: 10px 0 8px;
+      font-size: 15px;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .field input,
+    .field select {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 0 10px;
+      outline: 0;
+      background: var(--surface);
+    }
+
+    .toggles {
+      display: grid;
+      gap: 8px;
+    }
+
+    .model-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .model-option {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .model-option.active {
+      border-color: #b8ccff;
+      background: var(--brand-soft);
+    }
+
+    .model-option strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 13px;
+    }
+
+    .model-option span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    .key-input {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 8px;
+    }
+
+    .mcp-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      gap: 14px;
+    }
+
+    .mcp-server {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+    }
+
+    .mcp-server + .mcp-server {
+      margin-top: 8px;
+    }
+
+    .mcp-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .mcp-tool {
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      color: var(--muted);
+      background: var(--soft);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .toggle-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--line-soft);
+    }
+
+    .toggle {
+      width: 40px;
+      height: 24px;
+      padding: 3px;
+      border-radius: 999px;
+      background: var(--brand);
+    }
+
+    .toggle::after {
+      content: "";
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin-left: 16px;
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .composer {
+      padding: 12px 22px 16px;
+      border-top: 1px solid var(--line);
+      background: var(--surface);
+    }
+
+    .composer-inner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+    }
+
+    .composer textarea {
+      min-height: 48px;
+      border: 0;
+      outline: 0;
+      resize: vertical;
+      background: transparent;
+    }
+
+    .context-head {
+      padding: 15px 14px;
+      border-bottom: 1px solid var(--line);
+      font-weight: 800;
+    }
+
+    .context-body {
+      padding: 14px;
+    }
+
+    .source,
+    .step {
+      padding: 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface);
+      margin-bottom: 10px;
+    }
+
+    .source strong,
+    .step strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+
+    .source p,
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 1120px) {
+      .layout {
+        grid-template-columns: 220px minmax(0, 1fr);
+      }
+
+      .context {
+        display: none;
+      }
+
+      .topbar {
+        grid-template-columns: 220px 1fr auto;
+      }
+    }
+
+    @media (max-width: 820px) {
+      .topbar {
+        grid-template-columns: 1fr auto;
+      }
+
+      .search,
+      .sidebar {
+        display: none;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .title-row,
+      .split,
+      .form,
+      .mcp-grid {
+        grid-template-columns: 1fr;
+        display: grid;
+      }
+
+      .metrics,
+      .notes {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .content,
+      .main-head,
+      .composer {
+        padding-left: 12px;
+        padding-right: 12px;
+      }
+
+      .actions .btn:not(.primary) {
+        display: none;
+      }
+
+      .composer-inner {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">K</div>
+        <span>Knowledge Agent</span>
+      </div>
+      <label class="search">
+        <span>⌕</span>
+        <input placeholder="搜索文档、笔记、对话" />
+      </label>
+      <div class="actions">
+        <button class="btn">上传</button>
+        <button class="btn primary">新建知识库</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-scroll">
+          <div class="label">页面</div>
+          <button class="side-item active" data-view="dashboard"><span class="dot"></span><span>总览</span></button>
+          <button class="side-item" data-view="chat"><span class="dot"></span><span>Agent 对话</span></button>
+          <button class="side-item" data-view="documents"><span class="dot"></span><span>文档管理</span></button>
+          <button class="side-item" data-view="document"><span class="dot"></span><span>文档详情</span></button>
+          <button class="side-item" data-view="notes"><span class="dot"></span><span>笔记</span></button>
+          <button class="side-item" data-view="settings"><span class="dot"></span><span>设置</span></button>
+
+          <div class="label">知识库</div>
+          <button class="side-item active">
+            <span class="dot"></span>
+            <span class="side-text">
+              <span class="side-title">产品研究</span>
+              <span class="side-meta">42 文档 · 18 笔记</span>
+            </span>
+          </button>
+          <button class="side-item">
+            <span class="dot"></span>
+            <span class="side-text">
+              <span class="side-title">技术学习</span>
+              <span class="side-meta">27 文档 · 9 笔记</span>
+            </span>
+          </button>
+          <button class="side-item">
+            <span class="dot"></span>
+            <span class="side-text">
+              <span class="side-title">个人资料</span>
+              <span class="side-meta">16 文档 · 5 笔记</span>
+            </span>
+          </button>
+        </div>
+
+        <div class="user-card">
+          <div class="user-avatar">E</div>
+          <div>
+            <div class="user-name">Eson</div>
+            <div class="user-email">eson@example.com</div>
+          </div>
+          <button class="user-settings" data-view="settings" title="用户设置">⚙</button>
+        </div>
+      </aside>
+
+      <main class="main">
+        <section class="main-head">
+          <div class="title-row">
+            <div>
+              <h1 id="pageTitle">产品研究</h1>
+              <div class="desc" id="pageDesc">一个轻量的个人知识库工作台。</div>
+            </div>
+            <button class="btn primary">开始提问</button>
+          </div>
+          <nav class="tabs">
+            <button class="tab active" data-view="dashboard">总览</button>
+            <button class="tab" data-view="chat">对话</button>
+            <button class="tab" data-view="documents">文档</button>
+            <button class="tab" data-view="document">详情</button>
+            <button class="tab" data-view="notes">笔记</button>
+            <button class="tab" data-view="settings">设置</button>
+          </nav>
+        </section>
+
+        <section class="content">
+          <div class="page view" id="dashboardView">
+            <div class="surface">
+              <section class="section">
+                <div class="section-title">
+                  <strong>当前知识库</strong>
+                  <span class="badge green">Ready</span>
+                </div>
+                <div class="metrics">
+                  <div class="metric"><strong>42</strong><span>文档</span></div>
+                  <div class="metric"><strong>1,286</strong><span>分块</span></div>
+                  <div class="metric"><strong>18</strong><span>笔记</span></div>
+                  <div class="metric"><strong>96%</strong><span>已向量化</span></div>
+                </div>
+              </section>
+              <section class="section">
+                <div class="section-title">
+                  <strong>最近活动</strong>
+                  <button class="btn">查看全部</button>
+                </div>
+                <div class="list">
+                  <div class="row">
+                    <div>
+                      <div class="row-title">RAG 产品调研.pdf</div>
+                      <div class="row-sub">已完成解析和向量化</div>
+                    </div>
+                    <span class="badge green">Ready</span>
+                  </div>
+                  <div class="row">
+                    <div>
+                      <div class="row-title">会议纪要.docx</div>
+                      <div class="row-sub">正在生成 Embedding</div>
+                    </div>
+                    <span class="badge amber">68%</span>
+                  </div>
+                  <div class="row">
+                    <div>
+                      <div class="row-title">用户访谈摘要</div>
+                      <div class="row-sub">已保存为笔记</div>
+                    </div>
+                    <span class="badge">笔记</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <div class="page view hidden" id="chatView">
+            <div class="chat">
+              <div class="message">
+                <div class="avatar">你</div>
+                <div class="bubble user">帮我总结这些资料里，个人知识库 Agent 最核心的产品机会是什么？需要引用来源。</div>
+              </div>
+              <div class="message">
+                <div class="avatar ai">AI</div>
+                <div class="bubble">
+                  <strong>核心机会是把“资料检索”升级为“知识工作流”。</strong>
+                  <br />
+                  用户不只想找到文档，更想把分散资料转化为可复用的结论、笔记和行动项。第一版建议聚焦严谨引用问答、长文档摘要和一键保存笔记。
+                  <div class="chips">
+                    <span class="chip">RAG 产品调研.pdf · p12</span>
+                    <span class="chip">用户访谈.md · #03</span>
+                    <span class="chip">需求草稿.md · chunk 18</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="page view hidden" id="documentsView">
+            <div class="split">
+              <div class="upload">
+                <div>
+                  <strong>上传资料</strong>
+                  <div class="desc">支持 PDF、Markdown、TXT、DOCX</div>
+                  <button class="btn primary" style="margin-top: 12px;">选择文件</button>
+                </div>
+              </div>
+              <div class="surface section">
+                <div class="section-title">
+                  <strong>文档</strong>
+                  <button class="btn">批量操作</button>
+                </div>
+                <div class="list">
+                  <div class="row">
+                    <div>
+                      <div class="row-title">RAG 产品调研.pdf</div>
+                      <div class="row-sub">PDF · 186 分块 · 今天 10:24</div>
+                    </div>
+                    <span class="badge green">Ready</span>
+                  </div>
+                  <div class="row">
+                    <div>
+                      <div class="row-title">Agent 需求草稿.md</div>
+                      <div class="row-sub">Markdown · 42 分块 · 昨天 21:10</div>
+                    </div>
+                    <span class="badge green">Ready</span>
+                  </div>
+                  <div class="row">
+                    <div>
+                      <div class="row-title">会议纪要.docx</div>
+                      <div class="row-sub">DOCX · 正在向量化</div>
+                    </div>
+                    <span class="badge amber">处理中</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="page view hidden" id="documentView">
+            <div class="surface">
+              <section class="section doc">
+                <div class="section-title">
+                  <strong>RAG 产品调研.pdf</strong>
+                  <span class="badge green">已引用 7 次</span>
+                </div>
+                <h2>摘要</h2>
+                <p>个人知识库产品的关键不在于单次问答，而在于持续沉淀。用户希望系统理解资料之间的关系，并在回答时给出可追溯来源。</p>
+                <p>第一版产品建议优先完成文档导入、严谨引用问答和笔记生成。</p>
+                <div class="quote">Chunk 12 · 846 tokens：用户信任主要来自来源引用、上下文可见和结果可编辑。</div>
+              </section>
+            </div>
+          </div>
+
+          <div class="page view hidden" id="notesView">
+            <div class="notes">
+              <article class="note">
+                <span class="badge">研究报告</span>
+                <h3>个人知识库 Agent MVP</h3>
+                <p>第一版聚焦知识库、严谨引用问答和自动笔记生成，暂不做开放式桌面自动化。</p>
+              </article>
+              <article class="note">
+                <span class="badge">文档摘要</span>
+                <h3>用户访谈共性问题</h3>
+                <p>资料分散、检索难、重复总结多、无法追溯来源，是出现频率最高的四类问题。</p>
+              </article>
+              <article class="note">
+                <span class="badge">行动清单</span>
+                <h3>下一轮原型验证</h3>
+                <p>验证用户更需要 Chat 入口，还是文档阅读器里的上下文问答入口。</p>
+              </article>
+              <article class="note">
+                <span class="badge">学习卡片</span>
+                <h3>Hybrid Search</h3>
+                <p>结合向量检索和关键词检索，可以改善专有名词、数字、缩写等查询场景。</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="page view hidden" id="settingsView">
+            <div class="surface">
+              <section class="section">
+                <div class="section-title">
+                  <strong>模型配置</strong>
+                  <button class="btn primary">保存</button>
+                </div>
+                <div class="model-options">
+                  <button class="model-option active">
+                    <strong>云模型 API</strong>
+                    <span>使用 OpenAI、Azure 或其他托管模型。</span>
+                  </button>
+                  <button class="model-option">
+                    <strong>本地模型</strong>
+                    <span>连接 Ollama、LM Studio 或本地服务。</span>
+                  </button>
+                  <button class="model-option">
+                    <strong>私有部署</strong>
+                    <span>连接兼容 OpenAI 协议的内网模型。</span>
+                  </button>
+                </div>
+                <div class="form">
+                  <div class="field">
+                    <label>模型提供方</label>
+                    <select>
+                      <option>OpenAI Compatible</option>
+                      <option>OpenAI</option>
+                      <option>Azure OpenAI</option>
+                      <option>Ollama</option>
+                      <option>LM Studio</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>默认聊天模型</label>
+                    <select>
+                      <option>gpt-4.1-mini</option>
+                      <option>gpt-4.1</option>
+                      <option>qwen2.5:14b</option>
+                      <option>llama3.1:8b</option>
+                      <option>自定义模型名</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Base URL</label>
+                    <input value="https://api.openai.com/v1" />
+                  </div>
+                  <div class="field">
+                    <label>API Key</label>
+                    <div class="key-input">
+                      <input type="password" value="sk-••••••••••••••••" />
+                      <button class="btn">测试连接</button>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label>Embedding 模型</label>
+                    <select>
+                      <option>text-embedding-3-small</option>
+                      <option>text-embedding-3-large</option>
+                      <option>bge-m3</option>
+                      <option>nomic-embed-text</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>模型数据策略</label>
+                    <select>
+                      <option>仅发送检索片段到模型</option>
+                      <option>允许发送完整文档摘要</option>
+                      <option>完全本地，不调用云模型</option>
+                    </select>
+                  </div>
+                </div>
+              </section>
+              <section class="section">
+                <div class="section-title">
+                  <div>
+                    <strong>MCP 连接</strong>
+                    <div class="muted">让 Agent 连接外部工具、数据源和本地能力。</div>
+                  </div>
+                  <button class="btn primary">新增 MCP Server</button>
+                </div>
+                <div class="mcp-grid">
+                  <div>
+                    <div class="mcp-server">
+                      <div>
+                        <div class="row-title">本地文件工具</div>
+                        <div class="row-sub">stdio · 仅当前知识库 · 只读自动允许</div>
+                        <div class="mcp-tools">
+                          <span class="mcp-tool">list_files</span>
+                          <span class="mcp-tool">read_file</span>
+                          <span class="mcp-tool">search_files</span>
+                        </div>
+                      </div>
+                      <span class="badge green">已连接</span>
+                    </div>
+                    <div class="mcp-server">
+                      <div>
+                        <div class="row-title">Notion 工作区</div>
+                        <div class="row-sub">http · 全局可用 · 写入前确认</div>
+                        <div class="mcp-tools">
+                          <span class="mcp-tool">search_pages</span>
+                          <span class="mcp-tool">create_page</span>
+                        </div>
+                      </div>
+                      <span class="badge amber">需测试</span>
+                    </div>
+                  </div>
+                  <div class="surface section" style="box-shadow: none;">
+                    <div class="field">
+                      <label>传输方式</label>
+                      <select>
+                        <option>stdio</option>
+                        <option>http</option>
+                        <option>sse</option>
+                      </select>
+                    </div>
+                    <div class="field" style="margin-top: 10px;">
+                      <label>命令 / URL</label>
+                      <input value="npx -y @modelcontextprotocol/server-filesystem" />
+                    </div>
+                    <div class="field" style="margin-top: 10px;">
+                      <label>权限策略</label>
+                      <select>
+                        <option>只读工具自动允许</option>
+                        <option>写入工具需要确认</option>
+                        <option>每次调用都确认</option>
+                        <option>禁用高风险工具</option>
+                      </select>
+                    </div>
+                    <button class="btn" style="margin-top: 12px; width: 100%;">测试连接</button>
+                  </div>
+                </div>
+              </section>
+              <section class="section">
+                <div class="section-title">
+                  <strong>检索设置</strong>
+                </div>
+                <div class="form">
+                  <div class="field">
+                    <label>知识库名称</label>
+                    <input value="产品研究" />
+                  </div>
+                  <div class="field">
+                    <label>默认回答模式</label>
+                    <select>
+                      <option>严谨引用</option>
+                      <option>快速回答</option>
+                      <option>研究模式</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label>Top K</label>
+                    <input value="8" />
+                  </div>
+                  <div class="field">
+                    <label>相似度阈值</label>
+                    <input value="0.72" />
+                  </div>
+                </div>
+              </section>
+              <section class="section">
+                <div class="section-title">
+                  <strong>Agent 权限</strong>
+                </div>
+                <div class="toggles">
+                  <div class="toggle-row">
+                    <div>
+                      <strong>允许创建笔记</strong>
+                      <div class="muted">Agent 可将回答保存为新笔记。</div>
+                    </div>
+                    <div class="toggle"></div>
+                  </div>
+                  <div class="toggle-row">
+                    <div>
+                      <strong>强制引用来源</strong>
+                      <div class="muted">无来源时明确说明无法确认。</div>
+                    </div>
+                    <div class="toggle"></div>
+                  </div>
+                  <div class="toggle-row">
+                    <div>
+                      <strong>允许跨知识库检索</strong>
+                      <div class="muted">提问时可临时扩大检索范围。</div>
+                    </div>
+                    <div class="toggle"></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </section>
+
+        <section class="composer">
+          <div class="composer-inner">
+            <textarea placeholder="向知识库提问，或输入 /summarize、/compare、/note"></textarea>
+            <button class="btn primary">发送</button>
+          </div>
+        </section>
+      </main>
+
+      <aside class="context">
+        <div class="context-head">来源与步骤</div>
+        <div class="context-body">
+          <div class="label" style="margin-left: 0;">Sources</div>
+          <div class="source">
+            <strong>RAG 产品调研.pdf · p12</strong>
+            <p>用户信任来自来源引用、上下文可见和结果可编辑。</p>
+          </div>
+          <div class="source">
+            <strong>用户访谈.md · #03</strong>
+            <p>用户希望把分散资料整理成可复用结论和行动项。</p>
+          </div>
+          <div class="label" style="margin-left: 0;">Steps</div>
+          <div class="step">
+            <strong>1. 检索知识库</strong>
+            <p>找到 8 个相关片段，保留 3 个主要来源。</p>
+          </div>
+          <div class="step">
+            <strong>2. 整合回答</strong>
+            <p>合并重复观点，并附上可追溯引用。</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const titles = {
+      dashboard: ["产品研究", "一个轻量的个人知识库工作台。"],
+      chat: ["Agent 对话", "围绕知识库提问，并查看引用来源。"],
+      documents: ["文档管理", "上传、解析和维护你的资料。"],
+      document: ["文档详情", "查看摘要、关键片段和引用情况。"],
+      notes: ["笔记", "沉淀回答、摘要和行动项。"],
+      settings: ["设置", "配置检索参数和 Agent 权限。"]
+    };
+
+    const buttons = document.querySelectorAll("[data-view]");
+    const views = document.querySelectorAll(".view");
+    const pageTitle = document.getElementById("pageTitle");
+    const pageDesc = document.getElementById("pageDesc");
+
+    function showView(name) {
+      views.forEach((view) => view.classList.add("hidden"));
+      document.getElementById(name + "View").classList.remove("hidden");
+      document.querySelectorAll(".tab, .side-item").forEach((button) => {
+        button.classList.toggle("active", button.dataset.view === name);
+      });
+      pageTitle.textContent = titles[name][0];
+      pageDesc.textContent = titles[name][1];
+    }
+
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => showView(button.dataset.view));
+    });
+  </script>
+</body>
+</html>

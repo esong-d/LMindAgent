@@ -1,0 +1,41 @@
+.page {
+  min-height: 100%;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.title {
+  margin: 0;
+  color: var(--text-h);
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.2px;
+}
+
+.subtitle {
+  margin: 6px 0 0;
+  color: var(--text);
+  font-size: 13px;
+}
+
+.headerRight {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.kbSelect {
+  min-width: 220px;
+}
+
+.cardStack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

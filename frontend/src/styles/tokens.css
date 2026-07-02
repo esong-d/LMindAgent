@@ -1,0 +1,133 @@
+:root {
+  /* Text */
+  --text: #6b6375;
+  --text-h: #08060d;
+  --text-secondary: rgba(15, 23, 42, 0.58);
+  --text-tertiary: rgba(15, 23, 42, 0.42);
+
+  /* Surfaces */
+  --bg: #fff;
+  --surface: #fff;
+  --surface-secondary: #f5f6f8;
+  --surface-hover: #f5f6f8;
+  --surface-active: #eef2ff;
+  --surface-raised: rgba(255, 255, 255, 0.92);
+  --surface-inverse: #111827;
+
+  /* Borders */
+  --border: #e5e4e7;
+  --border-secondary: #e9edf5;
+  --border-hover: #d7ddea;
+
+  /* Brand */
+  --brand: #2f6bff;
+  --brand-bg: rgba(47, 107, 255, 0.12);
+  --brand-hover: #2359ff;
+  --brand-border: rgba(47, 107, 255, 0.22);
+
+  /* Accent */
+  --accent: #aa3bff;
+  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent-border: rgba(170, 59, 255, 0.5);
+
+  /* Code */
+  --code-bg: #f4f3ec;
+  --code-block-bg: #0f172a;
+  --code-block-text: #e2e8f0;
+
+  /* Misc */
+  --social-bg: rgba(244, 243, 236, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --overlay: rgba(0, 0, 0, 0.35);
+
+  /* Toast */
+  --toast-success-bg: #ecfdf5;
+  --toast-success-border: #a7f3d0;
+  --toast-success-text: #047857;
+  --toast-warn-bg: #fffbeb;
+  --toast-warn-border: #fde68a;
+  --toast-warn-text: #b45309;
+  --toast-error-bg: #fef2f2;
+  --toast-error-border: #fecaca;
+  --toast-error-text: #b91c1c;
+
+  /* Metrics */
+  --metric-green: #237804;
+  --metric-gold: #ad6800;
+  --metric-red: #a8071a;
+
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(0, 0, 0, 0.18);
+  --scrollbar-track: transparent;
+
+  /* Typography */
+  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, monospace;
+}
+
+[data-theme="dark"] {
+  /* Text — warm, high-contrast, easy on the eyes */
+  --text: #c0c0cc;
+  --text-h: #f2f2f7;
+  --text-secondary: #9e9eae;
+  --text-tertiary: #7a7a8e;
+
+  /* Surfaces — layered warm dark, subtle purple/warm undertone */
+  --bg: #0e0e16;
+  --surface: #1a1a26;
+  --surface-secondary: #232330;
+  --surface-hover: #2d2d3d;
+  --surface-active: rgba(190, 160, 255, 0.1);
+  --surface-raised: rgba(26, 26, 38, 0.97);
+  --surface-inverse: #f0f0f5;
+
+  /* Borders — subtle but visible */
+  --border: #282836;
+  --border-secondary: #353544;
+  --border-hover: #464658;
+
+  /* Brand — vibrant indigo, softer on dark */
+  --brand: #94a6ff;
+  --brand-bg: rgba(148, 166, 255, 0.12);
+  --brand-hover: #afbfff;
+  --brand-border: rgba(148, 166, 255, 0.22);
+
+  /* Accent — rich warm purple */
+  --accent: #cfb3ff;
+  --accent-bg: rgba(207, 179, 255, 0.12);
+  --accent-border: rgba(207, 179, 255, 0.32);
+
+  /* Code */
+  --code-bg: #1c1c2c;
+  --code-block-bg: #1b1b30;
+  --code-block-text: #d6d6e4;
+
+  /* Misc */
+  --social-bg: rgba(26, 26, 38, 0.5);
+  --shadow:
+    rgba(0, 0, 0, 0.5) 0 10px 15px -3px,
+    rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
+  --overlay: rgba(0, 0, 0, 0.7);
+
+  /* Toast — richer, more saturated */
+  --toast-success-bg: rgba(52, 211, 153, 0.14);
+  --toast-success-border: rgba(52, 211, 153, 0.28);
+  --toast-success-text: #4ade80;
+  --toast-warn-bg: rgba(251, 191, 36, 0.14);
+  --toast-warn-border: rgba(251, 191, 36, 0.28);
+  --toast-warn-text: #fbbf24;
+  --toast-error-bg: rgba(248, 113, 113, 0.14);
+  --toast-error-border: rgba(248, 113, 113, 0.28);
+  --toast-error-text: #f87171;
+
+  /* Metrics */
+  --metric-green: #4ade80;
+  --metric-gold: #fbbf24;
+  --metric-red: #f87171;
+
+  /* Scrollbar */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.14);
+  --scrollbar-track: transparent;
+}
