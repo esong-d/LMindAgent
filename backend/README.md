@@ -291,7 +291,7 @@ uv run -m scripts.generate_aes
 # 4.配置重排模型，只支持huggingface中支持的模型
 https://huggingface.co/spaces/mteb/leaderboard
 
-# 5.配置langsmith API和key
+# 5.配置langsmith API和key (可暂时不配置, 需要观察对话流程的详细信息可配置)
 https://smith.langchain.com/
 ```
 
