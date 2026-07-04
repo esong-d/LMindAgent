@@ -15,8 +15,8 @@ from app.integrations.llm_provider import ChatResult, LLMProvider, StreamChunk, 
 from app.integrations.model_config_provider import ModelConfigProvider
 from app.agents.prompts.prompt import build_qa_prompt, format_document_context
 from app.rag.retriever import VectorRetriever
-from app.rag.re_ranker import RerankerManager
 from app.rag._query import QueryHandler
+from app.core.rank import get_rank_manager
 
 settings = get_settings()
 
@@ -31,10 +31,10 @@ class QAWorkflow:
         """
         self.db = db
         self.retrieval: VectorRetriever = VectorRetriever(db)  
-        self.reranker: RerankerManager = RerankerManager()
         self.model_config_provider = ModelConfigProvider(db)
         self.query_handler: QueryHandler = QueryHandler(db)
         self.messages = MessageRepository(db)
+        self.reranker = get_rank_manager()
         self.top_k: int = settings.RERANKER_TOP_K
 
     async def chat(self, *, user_id: int, query: str, knowledge_base_id: str | None = None, conversation_id: str | None = None) -> dict[str, Any]:

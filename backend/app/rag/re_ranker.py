@@ -1,9 +1,69 @@
 
 import asyncio
+from typing import List
 
-from FlagEmbedding import FlagReranker
 from langchain_core.documents import Document
+from concurrent.futures import ThreadPoolExecutor
 
+import torch
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from langchain_core.documents import Document
+from transformers import PreTrainedModel
+from transformers.modeling_outputs import SequenceClassifierOutput
+from transformers.tokenization_utils_fast import PreTrainedTokenizerFast
+from transformers import BatchEncoding
+
+
+
+class BGEReranker:
+    """
+    替代 FlagReranker 的实现（解决 tokenizer warning + 提升性能）
+    """
+
+    def __init__(
+        self,
+        model_name: str = "BAAI/bge-reranker-base",
+        use_fp16: bool = True,
+        device: str | None = None
+    ):
+        self.model_name = model_name
+        self.use_fp16 = use_fp16
+
+        self.device = device or (
+            "cuda" if torch.cuda.is_available() else "cpu"
+        )
+
+        self.tokenizer: PreTrainedTokenizerFast = AutoTokenizer.from_pretrained(model_name)
+
+        self.model: PreTrainedModel = AutoModelForSequenceClassification.from_pretrained(
+            model_name
+        ).to(self.device)
+
+        self.model.eval()
+
+        if self.use_fp16 and self.device == "cuda":
+            self.model.half()
+
+    def compute_score(self, pairs: List[List[str]]) -> List[float]:
+        """
+        pairs: [[query, doc], ...]
+        """
+
+        with torch.no_grad():
+            inputs: BatchEncoding = self.tokenizer(
+                pairs,
+                padding=True,
+                truncation=True,
+                return_tensors="pt"
+            )
+
+            inputs: dict[str, torch.Tensor] = {k: v.to(self.device) for k, v in inputs.items()}
+
+            outputs: SequenceClassifierOutput = self.model(**inputs)
+
+            scores = outputs.logits.squeeze(-1)
+
+            return scores.float().cpu().tolist()
 
 
 class RerankerManager:
@@ -28,47 +88,50 @@ class RerankerManager:
         """
         self.model_name = model
         self.use_fp16 = use_fp16
-        self.re_rank_model: FlagReranker | None = None
+        self.re_rank_model: BGEReranker | None = None
         self.lock = asyncio.Lock()
+        self.executor = ThreadPoolExecutor(max_workers=5)
     
     async def init_model(
         self, 
         model: str = None, 
-        use_fp16: bool = True,
-        **kwargs
-    ) -> FlagReranker:
+        use_fp16: bool = True
+    ) -> BGEReranker:
         """初始化重排序模型, 可以在运行时动态切换模型"""
-        model = self.model_name or model
-        use_fp16 = self.use_fp16 or use_fp16
+        if self.re_rank_model:
+            return self.re_rank_model
+        
+        model = model or self.model_name
+        use_fp16 = self.use_fp16 if use_fp16 is None else use_fp16
 
         async with self.lock:
+            if self.re_rank_model:
+                return self.re_rank_model
+            
             if self.re_rank_model is None:
-                loop = asyncio.get_event_loop()
+                loop = asyncio.get_running_loop()
                 self.re_rank_model = await loop.run_in_executor(
                     None,
                     self._init_model,
                     model,
-                    use_fp16,
-                    **kwargs
+                    use_fp16
                 )
         
-        return self.re_rank_model
+            return self.re_rank_model
     
-    def _init_model(self, model: str, use_fp16: bool, **kwargs) -> None:
-        return FlagReranker(
-            model_name_or_path=model,
-            use_fp16=use_fp16,
-            **kwargs
+    def _init_model(self, model: str, use_fp16: bool) -> BGEReranker:
+        return BGEReranker(
+            model_name=model,
+            use_fp16=use_fp16
         )
     
     async def re_rank(
         self,
         query: str,
-        documents: list[Document] | list[str] | str,
-        **kwargs
+        documents: list[Document] | list[str] | str
     ) -> list[float]:
         """
-        对检索到的文档进行重新排序, 返回每个文档的相关性得分
+        对检索到的文档进行重新计算得分, 返回每个文档的相关性得分
 
         :param query: 用户查询文本
         :param documents: 待重排序的文档列表, 每个文档包含文本内容和元数据, 可以是Document对象列表或字符串列表
@@ -79,21 +142,20 @@ class RerankerManager:
         if self.re_rank_model is None:
             await self.init_model()
         
-        pairs = await self._format_query(query, documents)
-        loop = asyncio.get_event_loop()
+        pairs = self._format_query(query, documents)
+        loop = asyncio.get_running_loop()
         scores = await loop.run_in_executor(
-            None,
+            self.executor,
             self.re_rank_model.compute_score,
-            pairs,
-            **kwargs
+            pairs
         )
         return scores
     
-    async def _format_query(
+    def _format_query(
         self, 
         query: str, 
         documents: list[Document] | list[str] | str
-    ) -> list[tuple[str, str]]:
+    ) -> list[list[str]]:
         """
         将查询和文档格式化为字符串
         :param query: 查询
@@ -102,14 +164,15 @@ class RerankerManager:
         """
         format_result = []
         if isinstance(documents, str):
-            format_result.append([query, documents])
+            documents = [documents]
         
-        if isinstance(documents, list):
-            for doc in documents:
-                if isinstance(doc, Document):
-                    format_result.append([query, doc.page_content])
-                elif isinstance(doc, str):
-                    format_result.append([query, doc])
+        for doc in documents:
+            if isinstance(doc, Document):
+                format_result.append([query, doc.page_content])
+            elif isinstance(doc, str):
+                format_result.append([query, doc])
         
         return format_result
-        
+    
+    async def close(self):
+        self.executor.shutdown(wait=True)

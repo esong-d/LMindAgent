@@ -17,9 +17,9 @@ from app.agents.prompts.prompt import build_qa_prompt, format_document_context
 from app.agents.prompts.query_prompt import build_chitchat_prompt
 from app.integrations.embedding_provider import EmbeddingProvider
 from app.rag._query import QueryManager
-from app.rag.re_ranker import RerankerManager
 from app.rag.retriever import bm25_retrieve, embed_retrieve, rrf_fusion
 from app.core.config import get_settings
+from app.core.rank import get_rank_manager
 
 settings = get_settings()
 
@@ -245,9 +245,8 @@ async def ranked_node(state: RagState, config: RunnableConfig) -> RagState:
 
     query = state["query"]
     rrf_docs = state["rrf_docs"]
-    rank_manger = RerankerManager()
     start = time.perf_counter()
-    sources_scores = await rank_manger.re_rank(query=query, documents=rrf_docs) if rrf_docs else []
+    sources_scores = await get_rank_manager().re_rank(query=query, documents=rrf_docs) if rrf_docs else []
     sources_scores_list = sorted(zip(rrf_docs, sources_scores), key=lambda x: x[1], reverse=True) if sources_scores else []
     sources_rerank_res = [(source, _score) for source, _score in sources_scores_list[:settings.RERANKER_TOP_K]] if sources_scores_list else []
     time_cost = time.perf_counter() - start
