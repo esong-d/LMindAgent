@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import get_settings, init_langsmith
 from app.core.errors import install_exception_handlers
 from app.core.events import install_events
+from app.core.rank import close_rank_manager, init_rank_manager
 from app.db.session import init_engine, close_db_engine
 from app.db.redis_db.client import get_redis_client, close_redis_client
 from app.middleware.request_id import install_request_id_middleware
@@ -30,12 +31,17 @@ async def lifespan(app: FastAPI):
     await get_redis_client()
 
     await install_events() 
+
+    # 初始化rank模型管理器
+    init_rank_manager()
     
     yield
     
     # 在这里可以添加应用关闭时需要执行的代码，例如关闭数据库连接、清理资源等
     await close_redis_client()
     await close_db_engine()
+
+    await close_rank_manager()
 
 
 
