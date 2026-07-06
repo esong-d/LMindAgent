@@ -1,4 +1,4 @@
-# LocalMindAgent
+# LMindAgent
 
 基于 RAG（检索增强生成）的个人知识库智能 Agent。
 上传私有文档，用自然语言提问，获得带来源引用的可靠回答。
@@ -11,7 +11,7 @@
 ## 项目结构
 
 ```
-LocalMindAgent/
+LMindAgent/
 ├── backend/    # FastAPI + LangChain + langgraph + PostgreSQL + pgvector + Redis
 ├── frontend/   # React + TypeScript + Vite + Ant Design
 └── docs/       # 架构设计文档和UI HTML文件
